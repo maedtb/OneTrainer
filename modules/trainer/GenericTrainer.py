@@ -680,7 +680,7 @@ class GenericTrainer(BaseTrainer):
                         loss.backward()
 
                     has_gradient = True
-                    accumulated_loss += loss.item()
+                    accumulated_loss += loss.detach().item()
 
                     if self.__is_update_step(train_progress):
                         if scaler and self.config.optimizer.optimizer.supports_fused_back_pass() and self.config.optimizer.fused_back_pass:
