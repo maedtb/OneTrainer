@@ -29,7 +29,7 @@ class AdditionalEmbeddingWrapper(metaclass=ABCMeta):
 
         self.is_applied = False
         self.orig_forward = self.orig_module.forward
-        self.orig_median_norm = torch.norm(self.orig_module.weight, dim=1).median().item()
+        self.orig_median_norm = torch.norm(self.orig_module.weight, dim=1).median().detach().item()
 
     def forward(self, x, *args, **kwargs):
         # ensure that the original weights only contain as many embeddings as the unmodified tokenizer can create
