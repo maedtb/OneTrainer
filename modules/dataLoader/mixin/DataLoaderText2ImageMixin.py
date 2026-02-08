@@ -32,6 +32,7 @@ from mgds.pipelineModules.InlineDistributedSampler import InlineDistributedSampl
 from mgds.pipelineModules.LoadImage import LoadImage
 from mgds.pipelineModules.LoadMultipleTexts import LoadMultipleTexts
 from mgds.pipelineModules.LoadVideo import LoadVideo
+from mgds.pipelineModules.MapData import MapData
 from mgds.pipelineModules.ModifyPath import ModifyPath
 from mgds.pipelineModules.RandomBrightness import RandomBrightness
 from mgds.pipelineModules.RandomCircularMaskShrink import RandomCircularMaskShrink
@@ -111,14 +112,15 @@ class DataLoaderText2ImageMixin(metaclass=ABCMeta):
             'concept': 'concept_prompts',
             'filename': 'filename_prompt',
         }, default_in_name='sample_prompts')
-        select_random_text = SelectRandomText(texts_in_name='prompts', text_out_name='prompt')
+        #select_random_text = SelectRandomText(texts_in_name='prompts', text_out_name='prompt')
+        merge_prompts = MapData(in_name='prompts', out_name='prompt', map_fn=(lambda data: '\n'.join(data)))
 
         modules = [load_image, load_video]
 
         if vae_frame_dim:
             modules.append(image_to_video)
 
-        modules.extend([load_sample_prompts, load_concept_prompts, filename_prompt, select_prompt_input, select_random_text])
+        modules.extend([load_sample_prompts, load_concept_prompts, filename_prompt, select_prompt_input, merge_prompts]) #, select_random_text))
 
         if config.masked_training:
             modules.append(generate_mask)
